@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_state_management/home_screen.dart';
+import 'package:http/http.dart' as http;
+import 'package:riverpod_state_management/user.dart';
+
+//final nameProvider = Provider<String>((ref) => "mv");
+
+final fetchUserProvider = FutureProvider((ref) {
+  const url = 'https://jsonplaceholder.typicode.com/posts';
+
+  return http.get(Uri.tryParse(url)!).then((value) => postFromJson(value.body));
+});
 
 void main() {
-  runApp(ProviderScope(child: const MyApp()));
+  runApp(const ProviderScope(child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -20,25 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: HomePage(),
-    );
-  }
-}
-
-final currentDate = Provider<DateTime>(
-  (ref) => DateTime.now(),
-);
-
-class HomePage extends ConsumerWidget {
-  const HomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final date = ref.watch(currentDate);
-    return Scaffold(
-      body: Center(
-        child: Text(date.toIso8601String()),
-      ),
+      home: HomeScreen(),
     );
   }
 }
